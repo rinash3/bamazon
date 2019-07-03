@@ -80,12 +80,14 @@ function askForQuantity(product){
         });
 }
 function buy(product, quantity) {
+ var price = (product.price * quantity);
     connection.query(
       "UPDATE products SET stock_quantity = stock_quantity - ? WHERE item_id = ?",
       [quantity, product.item_id],
       function(err, res) {
         
-        console.log("Successfully purchased " + quantity + " " + product.product_name );
+        console.log("Successfully purchased " + quantity + " " + product.product_name +" ," + "Your Total Price:" + price +"$");
+        
         displyProducts();
       }
     );
@@ -100,3 +102,5 @@ function buy(product, quantity) {
           }
       }return null
   }
+  
+  //need to add quit option if user is done buying 
