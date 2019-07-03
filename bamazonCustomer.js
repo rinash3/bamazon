@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var table = require("table")
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -23,12 +24,13 @@ connection.connect(function(err) {
 function displyProducts(){
 connection.query("SELECT * FROM products", function(err, results) {
     if (err) throw err;
-    console.table(results);
+   console.table(results);
     askProductID(results)
 });
 }
 //ask the customer for product id
-function askProductID(inventory){
+function askProductID(results){
+   
     inquirer
     .prompt ([
         {
@@ -38,9 +40,12 @@ function askProductID(inventory){
         }
 
     ])
-    .then (function (userInput) {
-        var selectionId = parseInt(userInput.selection);
-        var product = checkInventory(selectionId, inventory);
+    .then (function (Input) {
+ 
+        var selectionId = parseInt(Input.selection);
+        
+        var product=checkInventory(selectionId, results);
+
         //if product with selected id exists ask the user for quantity  
         if(product){
             askForQuantity(product);
@@ -80,19 +85,18 @@ function buy(product, quantity) {
       [quantity, product.item_id],
       function(err, res) {
         
-        console.log("\nSuccessfully purchased " + quantity + " " + product.product_name + "'s!");
+        console.log("Successfully purchased " + quantity + " " + product.product_name );
         displyProducts();
       }
     );
   }
-  function checkInventory(selectionId, inventory){
-      for (let i = 0; i < inventory.length; i++) {
-        if (inventory[i].item_id === selectionId) {
+
+  function checkInventory(selectionId, results){
+   
+      for (var i = 0; i < results.length; i++) {
+        if (results[i].item_id === selectionId) {
             // If a matching product is found, return the product
-            return inventory[i];
-          }else {
-              return null;
+            return results[i];
           }
-          
-      }
+      }return null
   }
